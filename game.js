@@ -239,6 +239,9 @@
     burst(winner);
     await wait(speed() * 0.9);
 
+    // If there were hidden face-down cards (war occurred), reveal the full pile.
+    await revealPile(winner);
+
     // Shuffle the pile before giving to winner (prevents infinite loops with known orderings).
     shuffle(state.warPile);
     const target = winner === "player" ? state.playerDeck : state.aiDeck;
@@ -247,6 +250,70 @@
     updateCounts();
     renderDeckStacks();
     renderWarPile();
+  }
+
+  // Show every card in the current pile face-up so the player can see what was actually played.
+  // Only triggers when a war occurred (pile > 2 cards); normal rounds already display both cards.
+  async function revealPile(winner) {
+    if (state.warPile.length <= 2) return;
+
+    clearSlotCards();
+
+    const overlay = document.createElement("div");
+    overlay.className = "pile-reveal";
+
+    const header = document.createElement("div");
+    header.className = "pile-reveal-header";
+    header.textContent = winner === "player"
+      ? `You captured ${state.warPile.length} cards`
+      : `AI captured ${state.warPile.length} of your cards`;
+
+    const sub = document.createElement("div");
+    sub.className = "pile-reveal-sub";
+    sub.textContent = "— The spoils of war —";
+
+    const grid = document.createElement("div");
+    grid.className = "pile-reveal-grid";
+
+    // Split pile by side so the player can see their losses separately.
+    const playerCards = [];
+    const aiCards = [];
+    for (let i = 0; i < state.warPile.length; i++) {
+      (i % 2 === 0 ? playerCards : aiCards).push(state.warPile[i]);
+    }
+
+    const row = (label, cards, highlight) => {
+      const r = document.createElement("div");
+      r.className = "pile-reveal-row" + (highlight ? " highlight" : "");
+      const lab = document.createElement("div");
+      lab.className = "pile-reveal-label";
+      lab.textContent = label;
+      const cards_ = document.createElement("div");
+      cards_.className = "pile-reveal-cards";
+      cards.forEach((c, i) => {
+        const el = cardEl(c, { faceUp: true });
+        el.classList.add("mini");
+        el.style.animationDelay = (i * 40) + "ms";
+        el.classList.add("pop-in");
+        cards_.appendChild(el);
+      });
+      r.append(lab, cards_);
+      return r;
+    };
+
+    grid.append(
+      row("YOU played", playerCards, winner === "ai"),
+      row("AI played",  aiCards,     winner === "player"),
+    );
+
+    overlay.append(header, sub, grid);
+    els.battlefield.appendChild(overlay);
+
+    await wait(Math.max(1800, speed() * 2.2));
+
+    overlay.classList.add("fade-out");
+    await wait(300);
+    overlay.remove();
   }
 
   async function triggerWar(pCard, aCard) {

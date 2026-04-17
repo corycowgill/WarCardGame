@@ -514,6 +514,106 @@ body::before {
   transition: transform .3s ease;
 }
 
+/* -------- War pile reveal overlay -------- */
+.pile-reveal {
+  position: absolute;
+  inset: 8px;
+  background: radial-gradient(ellipse at center, rgba(10, 25, 20, .92), rgba(0, 0, 0, .95));
+  border: 2px solid rgba(233, 196, 100, .35);
+  border-radius: 14px;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  box-shadow: inset 0 0 60px rgba(233, 196, 100, .1);
+  animation: fadeIn .25s ease;
+}
+
+.pile-reveal.fade-out { animation: fadeOut .3s ease forwards; }
+@keyframes fadeOut { to { opacity: 0; transform: scale(.96); } }
+
+.pile-reveal-header {
+  font-family: "Georgia", serif;
+  font-size: 20px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #fff5c9, var(--gold), #7a5519);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 2px 0 rgba(0,0,0,.4);
+}
+
+.pile-reveal-sub {
+  color: #b9c9c3;
+  letter-spacing: 4px;
+  font-size: 11px;
+  text-transform: uppercase;
+  opacity: .7;
+  margin-bottom: 4px;
+}
+
+.pile-reveal-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  align-items: center;
+}
+
+.pile-reveal-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.05);
+}
+.pile-reveal-row.highlight {
+  background: rgba(255, 60, 60, .08);
+  border-color: rgba(255, 90, 90, .35);
+  box-shadow: 0 0 20px rgba(255, 60, 60, .25);
+}
+
+.pile-reveal-label {
+  min-width: 86px;
+  color: #e8eae5;
+  letter-spacing: 3px;
+  font-size: 11px;
+  text-transform: uppercase;
+  opacity: .85;
+}
+.pile-reveal-row.highlight .pile-reveal-label {
+  color: #ffb4b4;
+}
+
+.pile-reveal-cards {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.card.mini {
+  --card-w: 48px;
+  --card-h: 68px;
+  box-shadow: 0 4px 8px rgba(0,0,0,.5);
+}
+.card.mini .card-front { padding: 3px 4px; }
+.card.mini .card-front .corner { font-size: 11px; }
+.card.mini .card-front .corner .suit { font-size: 9px; }
+.card.mini .card-front .center-suit { font-size: 22px; }
+.card.mini .card-front.face .center-suit::after { font-size: 10px; letter-spacing: 1px; }
+
+.card.pop-in { animation: popInCard .35s cubic-bezier(.2,1.4,.3,1) backwards; }
+@keyframes popInCard {
+  from { transform: rotateY(180deg) scale(.4); opacity: 0; }
+  to   { transform: rotateY(180deg) scale(1);  opacity: 1; }
+}
+
 /* -------- Controls -------- */
 .controls {
   position: relative;
