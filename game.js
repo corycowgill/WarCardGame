@@ -37,6 +37,7 @@
     flip: $("flipBtn"),
     auto: $("autoBtn"),
     newg: $("newBtn"),
+    fs: $("fsBtn"),
     speed: $("speed"),
     roundNum: $("roundNum"),
     playerCount: $("playerCount"),
@@ -543,6 +544,19 @@
 
   els.newg.addEventListener("click", () => newGame());
   els.modalBtn.addEventListener("click", () => newGame());
+
+  els.fs.addEventListener("click", () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen?.().catch(() => {});
+    } else {
+      document.exitFullscreen?.();
+    }
+  });
+  document.addEventListener("fullscreenchange", () => {
+    els.fs.textContent = document.fullscreenElement ? "⛶ EXIT FS" : "⛶ FULLSCREEN";
+    // Canvas needs a resize after fullscreen transition.
+    resizeCanvas();
+  });
 
   // Keyboard: space/enter to flip.
   window.addEventListener("keydown", (e) => {

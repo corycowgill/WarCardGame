@@ -7,8 +7,9 @@
   --black: #111418;
   --card-bg: #fafaf5;
   --card-radius: 12px;
-  --card-w: 110px;
-  --card-h: 160px;
+  /* Scale cards to viewport so the game fills any screen like a real game canvas. */
+  --card-h: clamp(120px, 22vh, 220px);
+  --card-w: calc(var(--card-h) * 0.714);
   --shadow-deep: 0 18px 30px rgba(0,0,0,.55), 0 4px 8px rgba(0,0,0,.4);
   --shadow-lift: 0 26px 44px rgba(0,0,0,.6), 0 6px 14px rgba(0,0,0,.5);
 }
@@ -18,12 +19,18 @@
 html, body {
   margin: 0;
   padding: 0;
-  min-height: 100vh;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
   font-family: "Georgia", "Times New Roman", serif;
   color: #eee;
-  overflow-x: hidden;
   background:
     radial-gradient(ellipse at 50% 30%, #14614a 0%, var(--felt-1) 40%, var(--felt-2) 100%);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
 }
 
 body::before {
@@ -57,14 +64,15 @@ body::before {
   position: relative;
   z-index: 3;
   text-align: center;
-  padding: 18px 0 6px;
+  padding: 8px 0 2px;
+  flex-shrink: 0;
 }
 
 .title {
   margin: 0;
   font-family: "Georgia", serif;
-  font-size: 56px;
-  letter-spacing: 18px;
+  font-size: clamp(32px, 5vh, 56px);
+  letter-spacing: clamp(8px, 1.8vh, 18px);
   padding-left: 18px;
   display: inline-flex;
 }
@@ -90,7 +98,7 @@ body::before {
 .subtitle {
   color: #b9c9c3;
   letter-spacing: 6px;
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
   opacity: .75;
 }
@@ -99,12 +107,13 @@ body::before {
 .table {
   position: relative;
   z-index: 3;
+  flex: 1 1 auto;
+  min-height: 0;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  gap: 14px;
-  max-width: 1100px;
-  margin: 12px auto 6px;
-  padding: 10px 20px 0;
+  gap: 10px;
+  width: 100%;
+  padding: 6px clamp(10px, 2vw, 28px) 0;
 }
 
 .player-area {
@@ -112,11 +121,13 @@ body::before {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 10px 16px;
+  padding: 8px 16px;
   border-radius: 18px;
   background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.25));
   border: 1px solid rgba(255,255,255,.05);
   box-shadow: inset 0 0 40px rgba(0,0,0,.35);
+  min-height: 0;
+  flex-shrink: 0;
 }
 
 .ai-area { flex-direction: row-reverse; }
@@ -231,8 +242,12 @@ body::before {
 /* -------- Battlefield -------- */
 .battlefield {
   position: relative;
-  min-height: 260px;
-  padding: 24px 20px 14px;
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 16px 20px 10px;
   border-radius: 18px;
   background:
     radial-gradient(ellipse at 50% 40%, rgba(255,255,255,.06), transparent 60%),
@@ -246,8 +261,9 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 48px;
-  min-height: 200px;
+  gap: clamp(20px, 5vw, 80px);
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .slot {
@@ -324,9 +340,9 @@ body::before {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%) scale(0);
-  font-size: 120px;
+  font-size: clamp(60px, 14vw, 150px);
   font-weight: bold;
-  letter-spacing: 20px;
+  letter-spacing: clamp(8px, 2vw, 24px);
   color: #fff;
   text-shadow:
     0 0 20px #ff3b3b,
@@ -618,13 +634,13 @@ body::before {
 .controls {
   position: relative;
   z-index: 3;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 18px;
   flex-wrap: wrap;
-  padding: 14px;
-  margin-bottom: 14px;
+  padding: 10px 14px 14px;
 }
 
 .btn {
@@ -773,14 +789,29 @@ body::before {
 
 /* -------- Responsive -------- */
 @media (max-width: 900px) {
-  :root { --card-w: 86px; --card-h: 126px; }
-  .title { font-size: 42px; letter-spacing: 14px; }
+  :root { --card-h: clamp(100px, 18vh, 180px); }
   .battle-row { gap: 20px; }
-  .player-info { min-width: 170px; }
+  .player-info { min-width: 160px; gap: 10px; }
+  .avatar { width: 54px; height: 54px; }
 }
 
 @media (max-width: 600px) {
-  .table { padding: 6px 8px 0; }
-  .player-area { flex-wrap: wrap; gap: 8px; }
-  .title { font-size: 34px; letter-spacing: 10px; padding-left: 10px; }
+  :root { --card-h: clamp(90px, 16vh, 160px); }
+  .table { padding: 4px 8px 0; gap: 6px; }
+  .player-area { flex-wrap: wrap; gap: 8px; padding: 6px 10px; }
+  .title { padding-left: 10px; }
+  .subtitle { display: none; }
+  .topbar { padding: 4px 0 0; }
+}
+
+/* Short screens: shrink cards further so everything fits without scroll. */
+@media (max-height: 700px) {
+  :root { --card-h: clamp(90px, 18vh, 160px); }
+  .topbar { padding: 4px 0 0; }
+  .subtitle { display: none; }
+}
+
+@media (max-height: 520px) {
+  :root { --card-h: clamp(80px, 20vh, 140px); }
+  .avatar { width: 46px; height: 46px; }
 }
